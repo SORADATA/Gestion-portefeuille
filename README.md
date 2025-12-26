@@ -3,9 +3,13 @@
 > **Master 2 - Portfolio Management | Université de Lorraine**  
 > Advanced quantitative analysis combining Machine Learning, clustering, and Modern Portfolio Theory for CAC40 stocks
 
+
+[![Status](https://img.shields.io/badge/Status-In%20Development-yellow.svg)]()
+[![Completion](https://img.shields.io/badge/Completion-85%25-brightgreen.svg)]()
+[![Master](https://img.shields.io/badge/Master%202-Portfolio%20Management-blue.svg)]()
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Active-success.svg)]()
+[![GitHub stars](https://img.shields.io/github/stars/SORADATA/CAC40-Quantitative-Analysis-Predictive-Asset-Allocation)](https://github.com/SORADATA/CAC40-Quantitative-Analysis-Predictive-Asset-Allocation/stargazers)
 
 ---
 
@@ -24,6 +28,11 @@ This project develops an **intelligent portfolio management system** for CAC40 s
 | **Classification AUC** | **95.29%** | Excellent directional prediction (up/down) |
 | **Clustering Quality** | Silhouette Score > 0.6 | Well-separated momentum groups |
 | **Portfolio Sharpe** | Target > 1.0 | Risk-adjusted outperformance vs. benchmark |
+
+
+[![AUC](https://img.shields.io/badge/Classification%20AUC-95.29%25-brightgreen.svg)]()
+[![Sharpe](https://img.shields.io/badge/Sharpe%20Ratio-0.62-blue.svg)]()
+[![Alpha](https://img.shields.io/badge/Alpha%20vs%20CAC40-+3.2%25-success.svg)]()
 
 ---
 
@@ -62,9 +71,6 @@ Segment stocks into 4 behavioral groups based on RSI momentum:
 
 Predict if `return_1m > 0` (stock goes up/down):
 
-[![Status](https://img.shields.io/badge/Status-Work%20in%20Progress-yellow.svg)]()
-[![Completion](https://img.shields.io/badge/Completion-85%25-brightgreen.svg)]()
-[![Master](https://img.shields.io/badge/Master%202-Portfolio%20Management-blue.svg)]()
 
 
 
