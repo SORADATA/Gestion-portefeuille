@@ -1,0 +1,44 @@
+name: Daily Portfolio Update
+
+# 1. QUAND ? (Déclencheur)
+on:
+  schedule:
+    - cron: '0 8 * * *'  # Tous les jours à 8h00 UTC
+  workflow_dispatch:      # Permet de lancer manuellement pour tester
+
+permissions:
+  contents: write         # Donne le droit au robot d'écrire dans le repo
+
+# 2. QUOI ? (Les étapes)
+jobs:
+  build:
+    runs-on: ubuntu-latest # L'ordi virtuel gratuit de GitHub
+
+    steps:
+      # A. Récupérer ton code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # B. Installer Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # C. Installer les librairies (pandas, yfinance...)
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      # D. LANCER TON SCRIPT IA (Le "Coureur")
+      - name: Run AI Prediction & Optimization
+        run: python daily_run.py
+
+      # E. SAUVEGARDER LE CSV (Commit & Push)
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name 'GitHub Action Bot'
+          git config --global user.email 'action@github.com'
+          git add portfolio_history.csv
+          git commit -m "🤖 Mise à jour automatique du portefeuille" || echo "Rien à changer"
+          git push
