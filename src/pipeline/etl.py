@@ -2,6 +2,8 @@ import json
 from datetime import datetime
 from typing import Optional, Tuple
 import pandas as pd
+from pathlib import Path
+import yaml
 from const import DATA_DIR, BASE_DIR
 from src.extract.extractor import MarketExtractor
 from src.transform.processor import MarketDataProcessor
@@ -60,12 +62,10 @@ def get_data_pipeline(
 
 
 if __name__ == "__main__":
-    from pathlib import Path
-
     config_dir = Path("config/markets")
-    for config_file in sorted(config_dir.glob("*.json")):
+    for config_file in sorted(config_dir.glob("*.yml")):
         with open(config_file) as f:
-            market_config = json.load(f)
+            market_config = yaml.safe_load(f)
         market_name = market_config.get("market_name", "UNKNOWN")
         logger.info(f"Lancement ETL — {market_name}...")
         df_daily, df_monthly = get_data_pipeline(market_config)
