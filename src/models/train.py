@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import os
 import warnings
+import yaml
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
@@ -196,12 +197,17 @@ def walk_forward_eval(
             "n_test": len(df_te),
         }
         results.append(result)
-        logger.info(f"WF Window {result['window']} | AUC: {result['auc']:.4f} | APR: {result['apr']:.4f}")
+        logger.info(
+            f"WF Window {result['window']} | AUC: {result['auc']:.4f} | APR: {result['apr']:.4f}"
+            )
 
     return pd.DataFrame(results)
 
 
-def _evaluate_test_set(model: AlphaEdgeEnsemble, df_test: pd.DataFrame) -> tuple[float, float, dict]:
+def _evaluate_test_set(
+    model: AlphaEdgeEnsemble,
+    df_test: pd.DataFrame
+) -> tuple[float, float, dict]:
     """Calcule AUC, APR et métriques financières sur le test set."""
     proba = model.predict_proba(df_test)[:, 1]
     auc = roc_auc_score(df_test["target"], proba)
@@ -214,7 +220,11 @@ def _evaluate_test_set(model: AlphaEdgeEnsemble, df_test: pd.DataFrame) -> tuple
 # MLFLOW : PROMOTION DU CHAMPION
 # =============================================================================
 
-def _fetch_champion_stats(client: MlflowClient, registered_model_name: str, market_name: str) -> ChampionStats:
+def _fetch_champion_stats(
+    client: MlflowClient,
+    registered_model_name: str,
+    market_name: str
+) -> ChampionStats:
     """Récupère les métriques du champion actuel, ou des sentinelles s'il n'existe pas encore."""
     try:
         current_champ = client.get_model_version_by_alias(registered_model_name, "champion")
@@ -241,7 +251,11 @@ def _should_promote(challenger_sharpe: float, challenger_sortino: float, challen
 
     Retourne (promu: bool, raison: str).
     """
-    passes_safety = (challenger_sharpe >= SHARPE_THRESHOLD) and (challenger_max_dd >= MAX_DD_THRESHOLD)
+    passes_safety = (
+        challenger_sharpe >= SHARPE_THRESHOLD
+        ) and (
+            challenger_max_dd >= MAX_DD_THRESHOLD
+            )
     if not passes_safety:
         return False, "Sharpe ou Drawdown sous les seuils de sécurité absolus"
 
@@ -320,7 +334,9 @@ def _log_and_promote_to_mlflow(
                         repo_type="dataset",
                         token=HF_TOKEN
                     )
-                    logger.info(f"[{market_name}] Modèle persistant sauvegardé sur HF Hub ( soradata/alphaedge-data) ")
+                    logger.info(
+                        f"[{market_name}] Modèle persistant sauvegardé sur HF Hub ( soradata/alphaedge-data)"
+                        )
                 except Exception as e:
                     logger.error(f"[{market_name}] Sync faillure on Hf Hub : {e}")
 
@@ -387,11 +403,15 @@ def train_pipeline(market_config: dict) -> tuple[AlphaEdgeEnsemble, dict]:
 # =============================================================================
 
 def _load_configured_markets(config_dir: Path) -> list[dict]:
-    """Lit les fichiers de configuration JSON et retourne les configs complètes."""
+    """Lit les fichiers de configuration YAML et retourne les configs complètes."""
     configs = []
-    for config_file in sorted(config_dir.glob("*.json")):
+    for config_file in sorted(config_dir.glob("*.yml")):
         with open(config_file, encoding="utf-8") as f:
-            market_cfg = json.load(f)
+            market_cfg = yaml.safe_load(f)
+
+        if not market_cfg:
+            continue
+
         if not market_cfg.get("market_name"):
             logger.warning(f"Fichier de config sans 'market_name' ignoré : {config_file}")
             continue
